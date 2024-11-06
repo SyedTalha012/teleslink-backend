@@ -14,7 +14,7 @@ const createAccount = async(req,res)=>{
             let hash = await bcrypt.hash(password,10)
             let otp = Math.floor(Math.random() * 9000) + 1000;
             let validTill=new Date(new Date().setMinutes(new Date().getMinutes() + 5))
-            let create = await CtemsAccount.create({role,name,email,password:hash,licenseId,affilation,phone,address,daysAvailable,startTime,endTime,otp,otpValidTill:validTill})
+            let create = await CtemsAccount.create({role,name,email,password:hash,licenseId,phone,address,daysAvailable,startTime,endTime,otp,otpValidTill:validTill})
             if(create){
                 await sendDynamicMail("verification",email,name,otp)
                 return res.status(200).json({status:200,data:create,msg:"Account has been created we have sent you a verification email"})
