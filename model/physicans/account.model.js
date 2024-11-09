@@ -13,7 +13,8 @@ const accountSchema = mongoose.Schema({
     profileImage:{type:String,default:null},
     phone:{type:Number,required:true},
     clinicAddress:{type:String,required:true},
-
+    longitude:{type:String,required:true,default:null},
+    latitude:{type:String,required:true,default:null},
     daysAvailable:{type:Array,required:true},
     startTime:{type:String,required:true},
     endTime:{type:String,required:true},

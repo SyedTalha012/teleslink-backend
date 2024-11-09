@@ -5,7 +5,7 @@ const { uploadFile } = require("../../utils/function");
 
 const createAccount = async (req, res) => {
     try {
-        let { role, name, email, password, npi, affilation, phone, clinicAddress, daysAvailable, startTime, endTime } = req.body;
+        let { role, name, email, password, npi, affilation, phone, clinicAddress, daysAvailable, startTime, endTime,longitude,latitude  } = req.body;
         let findAccount = await PhysicianAccount.findOne({ email: email })
         if (findAccount) {
             console.log(findAccount?._id)
@@ -15,7 +15,7 @@ const createAccount = async (req, res) => {
             let hash = await bcrypt.hash(password, 10)
             let otp = Math.floor(Math.random() * 9000) + 1000;
             let validTill = new Date(new Date().setMinutes(new Date().getMinutes() + 5))
-            let create = await PhysicianAccount.create({ role, name, email, password: hash, npi, affilation, phone, clinicAddress, daysAvailable, startTime, endTime, otp, otpValidTill: validTill })
+            let create = await PhysicianAccount.create({ role, name, email, password: hash, npi, affilation, phone, clinicAddress, daysAvailable, startTime, endTime, otp, otpValidTill: validTill,longitude,latitude  })
             if (create) {
                 await sendDynamicMail("verification", email, name, otp)
                 return res.status(200).json({ status: 200, data: create, msg: "Account has been created we have sent you a verification email" })
