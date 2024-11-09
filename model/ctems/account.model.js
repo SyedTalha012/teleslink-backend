@@ -16,8 +16,8 @@ const accountSchema = mongoose.Schema({
     daysAvailable:{type:Array,required:true},
     startTime:{type:String,required:true},
     endTime:{type:String,required:true},
-
-
+    longitude:{type:String,required:true,default:null},
+    latitude:{type:String,required:true,default:null},
     otp: {type: Number,default: null},
     otpValidTill: {type: Date,default: null},
     otpVerified: {type: Boolean,default: false},
