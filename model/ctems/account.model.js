@@ -8,10 +8,11 @@ const accountSchema = mongoose.Schema({
     name:{type:String,required:true},
     email:{type:String,required:true},
     password:{type:String,required:true},
+    profileImage:{type:String,default:null},
     licenseId:{type:String,required:true},
     phone:{type:Number,required:true},
     address:{type:String,required:true},
-
+    equipments:{type:Array,required:true},
     daysAvailable:{type:Array,required:true},
     startTime:{type:String,required:true},
     endTime:{type:String,required:true},

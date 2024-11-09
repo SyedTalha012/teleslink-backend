@@ -10,7 +10,7 @@ const accountSchema = mongoose.Schema({
     password:{type:String,required:true},
     npi:{type:String,required:true},
     affilation:{type:String,required:true},
-
+    profileImage:{type:String,default:null},
     phone:{type:Number,required:true},
     clinicAddress:{type:String,required:true},
 
