@@ -13,6 +13,7 @@ const appointmentSchema = mongoose.Schema({
     reason:{type:String,required:true},
     instructions:{type:String,default: null},
     days:{type:Array,required:true},
+    appointmentDate:{type:String,required:true},
     startTime:{type:String,required:true},
     endTime:{type:String,required:true},
     urgent:{type:Boolean,default:false},
