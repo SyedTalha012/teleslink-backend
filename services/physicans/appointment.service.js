@@ -4,9 +4,9 @@ const Appointment = require("../../model/physicans/appointment.model");
 
 const createAppointment = async (req,res)=>{
     try {
-        let {physicanId,name,age,gender,contactInfo,address,notes,reason,instructions,days,startTime,endTime,urgent,ctemsId} = req.body
+        let {physicanId,name,age,gender,contactInfo,address,notes,reason,instructions,days,startTime,endTime,urgent,ctemsId,appointmentDate} = req.body
 
-        let create = await Appointment.create({physicanId,name,age,gender,contactInfo,address,notes,reason,instructions,days,startTime,endTime,urgent,ctemsId})
+        let create = await Appointment.create({physicanId,name,age,gender,contactInfo,address,notes,reason,instructions,days,startTime,endTime,urgent,ctemsId,appointmentDate})
         return res.status(200).json({msg:"Ctems Visit Created",status:200,data:create})
     } 
     catch (error) {
