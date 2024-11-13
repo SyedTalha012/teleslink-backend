@@ -81,7 +81,26 @@ const getAllAppointment = async (req,res)=>{
     }
 }
 
+const getAppointmentByCtemsAndDate=async(req,res)=>{
+    try {
+        let data = await Appointment.find({ctemsId:req.params.id,appointmentDate:req.params.date}).populate("ctemsId").populate("physicanId")
+        return res.status(200).json({msg:null,status:200,data:data})
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
+
+const getAppointmentByPhysicianAndDate=async(req,res)=>{
+    try {
+        let data = await Appointment.find({physicanId:req.params.id,appointmentDate:req.params.date}).populate("ctemsId").populate("physicanId")
+        return res.status(200).json({msg:null,status:200,data:data})
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
 
 
 
-module.exports={createAppointment,getAppointmentByCtems,getAppointmentByPhysician,updateAppointmentStatus,getSingleAppointment,getAllAppointment,toogleInvitation}
+module.exports={createAppointment,getAppointmentByCtems,getAppointmentByPhysician,updateAppointmentStatus,getSingleAppointment,getAllAppointment,toogleInvitation,getAppointmentByCtemsAndDate,getAppointmentByPhysicianAndDate}
