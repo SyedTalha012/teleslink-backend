@@ -1,26 +1,41 @@
 const Chat = require("../../model/chat/chat.schema");
+const Message = require("../../model/chat/message.schema");
 
 
 
 const getCtemsAllChats = async (req, res) => {
     try {
-        let data = await Chat.find({ ctemsId: req.params.id }).populate("physicianId").populate("ctemsId")
-        return res.status(200).json({ msg: null, status: 200, data: data })
+        let chats = await Chat.find({ ctemsId: req.params.id }).populate("physicianId").populate("ctemsId");
+        if (!chats || chats.length === 0) {
+            return res.status(200).json({ msg: null, status: 200, data: [] });
+        }
+        const updatedChats = await Promise.all(chats.map(async (chat) => {
+            let latestMessage = await Message.findOne({ chatId: chat._id }).sort({ createdAt: -1 });    
+            return {...chat._doc,latestMessage: latestMessage || null,};
+        }));
+        return res.status(200).json({ msg: null, status: 200, data: updatedChats });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: 'An error occurred', status: 500 });
     }
-    catch (error) {
-        console.log(error)
-    }
-}
-
+};
 const getphysicianAllChats = async (req, res) => {
     try {
-        let data = await Chat.find({ physicianId: req.params.id }).populate("physicianId").populate("ctemsId")
-        return res.status(200).json({ msg: null, status: 200, data: data })
+        let chats = await Chat.find({ physicianId: req.params.id }).populate("physicianId").populate("ctemsId");
+        if (!chats || chats.length === 0) {
+            return res.status(200).json({ msg: null, status: 200, data: [] });
+        }
+        const updatedChats = await Promise.all(chats.map(async (chat) => {
+            let latestMessage = await Message.findOne({ chatId: chat._id }).sort({ createdAt: -1 });
+            return {...chat._doc,latestMessage: latestMessage || null,};
+        }));
+        return res.status(200).json({ msg: null, status: 200, data: updatedChats });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: 'An error occurred', status: 500 });
     }
-    catch (error) {
-        console.log(error)
-    }
-}
+};
+
 
 const createChat = async (req, res) => {
     try {
