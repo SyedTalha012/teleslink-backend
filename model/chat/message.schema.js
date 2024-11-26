@@ -5,7 +5,7 @@ const messageSchema = mongoose.Schema(
     chatId: { type: mongoose.Schema.Types.ObjectId, ref: "Chat", required: true },
     ctemsId:{type:mongoose.Schema.Types.ObjectId,ref:"CtemsAccount"},
     physicianId:{type:mongoose.Schema.Types.ObjectId,ref:"PhysicianAccount"},
-    senderRole: { type: String, required: true, enum: ["CtemsAccount", "PhysicianAccount"] }, // Role of the sender
+    senderRole: { type: String, required: true}, // Role of the sender
     message: { type: String, required: true },
   },
   { timestamps: true }
