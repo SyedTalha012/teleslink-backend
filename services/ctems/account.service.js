@@ -34,7 +34,7 @@ const resendOtp = async (req, res) => {
         if (userInfo) {
             let otp = Math.floor(Math.random() * 9000) + 1000;
             let validTill = new Date(new Date().setMinutes(new Date().getMinutes() + 5))
-            let update = await CtemsAccount.findByIdAndUpdate(userId, { otp, otpValidTill: validTill }, { $new: true })
+            let update = await CtemsAccount.findByIdAndUpdate(userId, { otp, otpValidTill: validTill }, { new: true })
             if (update) {
                 await sendDynamicMail("verification", userInfo?.email, userInfo?.name, otp)
                 return res.status(200).json({ status: 200, data: null, msg: "Otp sent" })
@@ -63,12 +63,12 @@ const verifyOtp = async (req, res) => {
                 if (isExpired) {
                     let otp = Math.floor(Math.random() * 9000) + 1000;
                     let validTill = new Date(new Date().setMinutes(new Date().getMinutes() + 5))
-                    let update = await CtemsAccount.findByIdAndUpdate(userId, { otp, otpValidTill: validTill }, { $new: true })
+                    let update = await CtemsAccount.findByIdAndUpdate(userId, { otp, otpValidTill: validTill }, { new: true })
                     await sendDynamicMail("verification", userInfo?.email, userInfo?.name, otp)
                     return res.status(403).json({ status: 403, msg: "OTP expired new otp has been sent", data: null })
                 }
                 else {
-                    let update = await CtemsAccount.findByIdAndUpdate(userId, { otpVerified: true }, { $new: true })
+                    let update = await CtemsAccount.findByIdAndUpdate(userId, { otpVerified: true }, { new: true })
                     return res.status(200).json({ status: 403, msg: "Account Verified", data: update })
                 }
 
@@ -95,7 +95,7 @@ const loginAccount = async (req, res) => {
             if (!findAccount?.otpVerified) {
                 let otp = Math.floor(Math.random() * 9000) + 1000;
                 let validTill = new Date(new Date().setMinutes(new Date().getMinutes() + 5))
-                let update = await CtemsAccount.findByIdAndUpdate(findAccount?._id, { otp, otpValidTill: validTill }, { $new: true })
+                let update = await CtemsAccount.findByIdAndUpdate(findAccount?._id, { otp, otpValidTill: validTill }, { new: true })
                 await sendDynamicMail("verification", findAccount?.email, findAccount?.name, otp)
                 return res.status(403).json({ status: 403, msg: "Your account is not verified we have sent otp to your email", data: null })
             }
@@ -132,7 +132,7 @@ const getUserById = async (req, res) => {
 
 const updateEquiments = async (req, res) => {
     try {
-        let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { equipments: req.body.equipments }, { $new: true })
+        let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { equipments: req.body.equipments }, { new: true })
         return res.status(200).json({ msg: null, data: update, status: 200 })
     }
     catch (error) {
@@ -165,11 +165,11 @@ const updateProfile = async (req, res) => {
 
         if (image) {
             let url = await uploadFile(image);
-            let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { name: name, profileImage: url }, { $new: true })
+            let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { name: name, profileImage: url }, { new: true })
             return res.status(200).json({ msg: null, data: update, status: 200 })
         }
         else {
-            let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { name: name }, { $new: true })
+            let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { name: name }, { new: true })
             return res.status(200).json({ msg: null, data: update, status: 200 })
         }
     }
@@ -182,7 +182,7 @@ const updatePhone = async (req, res) => {
     try {
 
         let { phone } = req.body
-        let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { phone: phone }, { $new: true })
+        let update = await CtemsAccount.findByIdAndUpdate(req.params.id, { phone: phone }, { new: true })
         return res.status(200).json({ msg: null, data: update, status: 200 })
 
     }
