@@ -49,6 +49,28 @@ const resendOtp = async (req, res) => {
     }
 }
 
+const sendOtpToEmail = async (req, res) => {
+    try {
+        let { email } = req.body;
+        let userInfo = await CtemsAccount.findOne({email})
+        if (userInfo) {
+            let otp = Math.floor(Math.random() * 9000) + 1000;
+            let validTill = new Date(new Date().setMinutes(new Date().getMinutes() + 5))
+            let update = await CtemsAccount.findByIdAndUpdate(userInfo?._id, { otp, otpValidTill: validTill }, { $new: true })
+            if (update) {
+                await sendDynamicMail("verification", userInfo?.email, userInfo?.name, otp)
+                return res.status(200).json({ status: 200, data: userInfo?._id, msg: "Otp sent" })
+            }
+        }
+        else {
+            return res.status(404).json({ status: 404, msg: "Invalid Email", data: null })
+        }
+    }
+    catch (error) {
+        return res.status(500).json({ status: 500, msg: error, data: null })
+    }
+}
+
 const verifyOtp = async (req, res) => {
     try {
         let { userId, otp } = req.body
@@ -76,6 +98,60 @@ const verifyOtp = async (req, res) => {
         }
         else {
             return res.status(404).json({ status: 404, msg: "Invalid user id", data: null })
+        }
+
+    }
+    catch (error) {
+        return res.status(500).json({ status: 500, msg: error, data: null })
+    }
+}
+
+const verifyOtpForResetPassword = async (req, res) => {
+    try {
+        let { userId, otp } = req.body
+        let userInfo = await CtemsAccount.findById(userId)
+        if (userInfo) {
+            let compareOtp = userInfo.otp === otp
+            if (!compareOtp) {
+                return res.status(400).json({ status: 400, msg: "Invalid otp", data: null })
+            }
+            else {
+                let isExpired = new Date() > new Date(userInfo.otpValidTill);
+                if (isExpired) {
+                    let otp = Math.floor(Math.random() * 9000) + 1000;
+                    let validTill = new Date(new Date().setMinutes(new Date().getMinutes() + 5))
+                    let update = await CtemsAccount.findByIdAndUpdate(userId, { otp, otpValidTill: validTill }, { $new: true })
+                    await sendDynamicMail("verification", userInfo?.email, userInfo?.name, otp)
+                    return res.status(403).json({ status: 403, msg: "OTP expired new otp has been sent", data: null })
+                }
+                else {
+                    let update = await CtemsAccount.findByIdAndUpdate(userId, { resetVerified: true }, { $new: true })
+                    return res.status(200).json({ status: 403, msg: "Account Verified", data: update })
+                }
+
+            }
+        }
+        else {
+            return res.status(404).json({ status: 404, msg: "Invalid user id", data: null })
+        }
+
+    }
+    catch (error) {
+        return res.status(500).json({ status: 500, msg: error, data: null })
+    }
+}
+
+const changePassword = async (req, res) => {
+    try {
+        let { userId,password} = req.body
+        let userInfo = await CtemsAccount.findById(userId)
+        if (userInfo?.resetVerified) {
+            let hash = await bcrypt.hash(password, 10)
+            let updateInfo = await CtemsAccount.findByIdAndUpdate(userId,{password:hash,resetVerified:false},{new:true})
+            return res.status(404).json({ status: 404, msg: "Password Changed", data: updateInfo })
+        }
+        else {
+            return res.status(404).json({ status: 404, msg: "Invalid user id or reset password not verified", data: null })
         }
 
     }
@@ -192,4 +268,4 @@ const updatePhone = async (req, res) => {
 }
 
 
-module.exports = { createAccount, resendOtp, verifyOtp, loginAccount, getUserById, updateEquiments, getAllCtems, updateProfile,updatePhone }
+module.exports = { createAccount, resendOtp, verifyOtp, loginAccount, getUserById, updateEquiments, getAllCtems, updateProfile,updatePhone,sendOtpToEmail,verifyOtpForResetPassword,changePassword}
